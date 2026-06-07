@@ -131,7 +131,10 @@ export default function NewDropsPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
             {products.map((product) => (
               <div key={product.id} className="group relative">
-                <Link href={`/products/${product.id}`} className="block">
+                <Link
+                  href={`/products/${product.name.toLowerCase().replace(/ /g, "-")}`}
+                  className="block"
+                >
                   <div className="relative aspect-square overflow-hidden rounded-[2rem] bg-muted mb-6">
                     <Image
                       src={product.image}
@@ -176,7 +179,9 @@ export default function NewDropsPage() {
                       <span className="text-xs uppercase tracking-widest text-muted-foreground font-bold mb-1 block">
                         {product.category}
                       </span>
-                      <Link href={`/products/${product.id}`}>
+                      <Link
+                        href={`/products/${product.name.toLowerCase().replace(/ /g, "-")}`}
+                      >
                         <h3 className="font-bold text-lg hover:text-primary transition-colors leading-tight">
                           {product.name}
                         </h3>
