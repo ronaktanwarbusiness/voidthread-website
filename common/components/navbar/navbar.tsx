@@ -21,6 +21,8 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
 
+import { useAuth } from "@/hooks/auth";
+
 const navItems = [
   {
     title: "New Drops",
@@ -35,6 +37,7 @@ const navItems = [
 ];
 
 export function Navbar() {
+  const { user, logout } = useAuth();
   const [isOpen, setIsOpen] = React.useState(false);
   const [scrolled, setScrolled] = React.useState(false);
 
@@ -109,16 +112,35 @@ export function Navbar() {
           </div>
 
           <div className="flex items-center gap-1">
-            <Link href="/login">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-11 w-11 rounded-full hover:bg-muted/50 text-foreground/70 hover:text-foreground"
-              >
-                <User className="h-5 w-5" />
-                <span className="sr-only">Account</span>
-              </Button>
-            </Link>
+            <div className="hidden md:flex items-center gap-1">
+              {user ? (
+                <div className="flex items-center gap-1">
+                  <span className="text-xs font-bold mr-2 hidden md:block uppercase tracking-widest text-foreground/70">
+                    {user.first_name}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-11 w-11 rounded-full hover:bg-muted/50 text-foreground/70 hover:text-foreground"
+                    onClick={() => logout()}
+                  >
+                    <User className="h-5 w-5" />
+                    <span className="sr-only">Logout</span>
+                  </Button>
+                </div>
+              ) : (
+                <Link href="/login">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-11 w-11 rounded-full hover:bg-muted/50 text-foreground/70 hover:text-foreground"
+                  >
+                    <User className="h-5 w-5" />
+                    <span className="sr-only">Account</span>
+                  </Button>
+                </Link>
+              )}
+            </div>
             <Button
               variant="ghost"
               size="icon"
@@ -167,11 +189,11 @@ export function Navbar() {
                 onClick={() => setIsOpen(false)}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xl font-semibold tracking-tight">
+                  <span className="text-lg font-semibold tracking-tight">
                     {item.title}
                   </span>
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted/50 group-hover:bg-primary group-hover:text-primary-foreground transition-all">
-                    <ChevronRight className="h-5 w-5" />
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-muted/50 group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                    <ChevronRight className="h-4 w-4" />
                   </div>
                 </div>
                 <span className="text-sm text-muted-foreground line-clamp-1">
@@ -188,18 +210,48 @@ export function Navbar() {
               "delay-300",
             )}
           >
-            <div className="flex flex-col gap-3 pt-6">
+            <div className="flex flex-col gap-2.5 pt-6">
               <Button
                 variant="outline"
-                className="w-full h-14 rounded-2xl text-lg font-medium border-2 flex gap-3"
+                className="w-full h-12 rounded-xl text-sm font-semibold border-2 flex gap-2.5"
               >
-                <Search className="h-5 w-5" /> Search Products
+                <Search className="h-4 w-4" /> Search Products
               </Button>
-              <Link href="/login" onClick={() => setIsOpen(false)} className="w-full">
-                <Button className="w-full h-14 rounded-2xl text-lg font-medium shadow-xl shadow-primary/20 flex gap-2">
-                  Sign In <User className="h-5 w-5" />
-                </Button>
-              </Link>
+              {user ? (
+                <div className="flex flex-col gap-2.5 w-full">
+                  <Link
+                    href="/profile"
+                    onClick={() => setIsOpen(false)}
+                    className="w-full"
+                  >
+                    <Button
+                      variant="outline"
+                      className="w-full h-12 rounded-xl text-sm font-semibold border-2 flex gap-2.5"
+                    >
+                      My Profile <User className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                  <Button
+                    onClick={() => {
+                      logout();
+                      setIsOpen(false);
+                    }}
+                    className="w-full h-12 rounded-xl text-sm font-semibold shadow-lg shadow-primary/10 flex gap-2"
+                  >
+                    Logout ({user.first_name}) <User className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={() => setIsOpen(false)}
+                  className="w-full"
+                >
+                  <Button className="w-full h-12 rounded-xl text-sm font-semibold shadow-lg shadow-primary/10 flex gap-2">
+                    Sign In <User className="h-4 w-4" />
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
         </div>

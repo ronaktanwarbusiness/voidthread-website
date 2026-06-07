@@ -4,12 +4,32 @@ import * as React from "react";
 import Link from "next/link";
 import { ArrowRight, Mail, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/auth";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function LoginPage() {
+  const { login, loading } = useAuth();
+  const router = useRouter();
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await login({ email, password });
+      toast.success("Welcome back to VoidThread!");
+      router.push("/");
+    } catch (err: any) {
+      toast.error(
+        err.message || "Failed to sign in. Please check your credentials.",
+      );
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-background flex items- justify-center py-8 px-6">
-      <div className="w-full max-w-xl">
-        {/* Logo/Brand */}
+    <div className="min-h-screen bg-background flex items-center justify-center py-12 px-6">
+      <div className="w-full max-w-lg">
         <div className="flex flex-col items-center mb-10 text-center">
           <h1 className="text-3xl font-bold tracking-tighter">Welcome Back</h1>
           <p className="text-muted-foreground mt-2">
@@ -18,14 +38,17 @@ export default function LoginPage() {
         </div>
 
         {/* Auth Card */}
-        <div className="bg-white border border-border/50 rounded-[2.5rem] p-8 md:p-10 shadow-2xl shadow-primary/5">
-          <form className="space-y-6">
+        <div className="bg-muted/20 border border-border/50 rounded-[2.5rem] p-8 md:p-10 shadow-2xl shadow-primary/5">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-2">
               <label className="text-sm font-semibold px-2 flex items-center gap-2">
                 <Mail className="h-4 w-4 text-muted-foreground" /> Email Address
               </label>
               <input
                 type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@example.com"
                 className="w-full h-14 rounded-2xl bg-background border border-border/50 px-6 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
               />
@@ -45,13 +68,21 @@ export default function LoginPage() {
               </div>
               <input
                 type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 className="w-full h-14 rounded-2xl bg-background border border-border/50 px-6 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
               />
             </div>
 
-            <Button className="w-full h-14 rounded-2xl text-lg font-bold shadow-2xl shadow-primary/20 transition-all hover:scale-[1.02]">
-              Sign In <ArrowRight className="ml-2 h-5 w-5" />
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full h-14 rounded-2xl text-lg font-bold shadow-2xl shadow-primary/20 transition-all hover:scale-[1.02]"
+            >
+              {loading ? "Signing In..." : "Sign In"}{" "}
+              <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </form>
 
