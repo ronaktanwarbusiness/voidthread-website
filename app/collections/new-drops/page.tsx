@@ -1,8 +1,8 @@
 "use client";
 
-import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useState, useMemo } from "react";
 import {
   Heart,
   ShoppingBag,
@@ -13,86 +13,36 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { PageHeader } from "@/common/components/page-header";
+import newDropsData from "@/temp/new-drops.json";
 
 const tshirtImage =
   "https://res.cloudinary.com/dwx8nsy4v/image/upload/v1779468923/hope-oversized_goqyqq.png";
 
-const products = [
-  {
-    id: 1,
-    name: "Heavyweight Boxy Tee",
-    price: "$45.00",
-    category: "Oversized",
-    image: tshirtImage,
-    rating: 4.9,
-    isNew: true,
-  },
-  {
-    id: 2,
-    name: "Minimalist Graphic Tee",
-    price: "$38.00",
-    category: "Graphic",
-    image: tshirtImage,
-    rating: 4.8,
-    isNew: true,
-  },
-  {
-    id: 3,
-    name: "Vintage Wash Essential",
-    price: "$42.00",
-    category: "Essential",
-    image: tshirtImage,
-    rating: 5.0,
-    isNew: true,
-  },
-  {
-    id: 4,
-    name: "Premium Pima Cotton Tee",
-    price: "$55.00",
-    category: "Luxury",
-    image: tshirtImage,
-    rating: 4.7,
-    isNew: true,
-  },
-  {
-    id: 5,
-    name: "Distressed Street Tee",
-    price: "$48.00",
-    category: "Oversized",
-    image: tshirtImage,
-    rating: 4.6,
-    isNew: true,
-  },
-  {
-    id: 6,
-    name: "Abstract Art Tee",
-    price: "$40.00",
-    category: "Graphic",
-    image: tshirtImage,
-    rating: 4.9,
-    isNew: true,
-  },
-  {
-    id: 7,
-    name: "Carbon Black Basic",
-    price: "$35.00",
-    category: "Essential",
-    image: tshirtImage,
-    rating: 4.8,
-    isNew: true,
-  },
-  {
-    id: 8,
-    name: "Desert Sand Oversize",
-    price: "$50.00",
-    category: "Oversized",
-    image: tshirtImage,
-    rating: 4.7,
-    isNew: true,
-  },
-];
+const baseProducts = newDropsData.map((p) => ({
+  id: p._id,
+  name: p.name,
+  slug: p.slug,
+  price: `₹${p.selling_price}`,
+  originalPrice: `₹${p.original_price}`,
+  category: "Oversized",
+  image: p.images?.[0] || tshirtImage,
+  rating: 4.8,
+  isNew: true,
+  createdAt: p.createdAt,
+}));
 
 export default function NewDropsPage() {
+  const [sortBy, setSortBy] = useState<"newest" | "oldest">("newest");
+  const [isSortOpen, setIsSortOpen] = useState(false);
+
+  const sortedProducts = useMemo(() => {
+    return [...baseProducts].sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return sortBy === "newest" ? dateB - dateA : dateA - dateB;
+    });
+  }, [sortBy]);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Collection Header */}
@@ -110,17 +60,62 @@ export default function NewDropsPage() {
               <SlidersHorizontal className="h-4 w-4" /> Filters
             </button>
             <div className="hidden md:flex items-center gap-4 text-xs font-medium text-muted-foreground">
-              <span>{products.length} Products</span>
+              <span>{sortedProducts.length} Products</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 relative">
             <span className="text-xs font-medium text-muted-foreground hidden sm:inline">
               Sort by:
             </span>
-            <button className="flex items-center gap-1 text-sm font-semibold hover:text-primary transition-colors">
-              Newest <ChevronDown className="h-4 w-4" />
+            <button
+              onClick={() => setIsSortOpen(!isSortOpen)}
+              className="flex items-center gap-1 text-sm font-semibold hover:text-primary transition-colors min-w-[80px] justify-end"
+            >
+              {sortBy === "newest" ? "Newest" : "Oldest"}{" "}
+              <ChevronDown
+                className={cn(
+                  "h-4 w-4 transition-transform",
+                  isSortOpen && "rotate-180",
+                )}
+              />
             </button>
+
+            {/* Simple Sort Dropdown */}
+            {isSortOpen && (
+              <>
+                <div
+                  className="fixed inset-0 z-40"
+                  onClick={() => setIsSortOpen(false)}
+                />
+                <div className="absolute top-full right-0 mt-2 w-40 bg-background border rounded-xl shadow-xl z-50 overflow-hidden">
+                  <button
+                    onClick={() => {
+                      setSortBy("newest");
+                      setIsSortOpen(false);
+                    }}
+                    className={cn(
+                      "w-full px-4 py-3 text-sm text-left hover:bg-muted transition-colors font-medium relative z-50",
+                      sortBy === "newest" && "text-primary bg-primary/5",
+                    )}
+                  >
+                    Newest
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSortBy("oldest");
+                      setIsSortOpen(false);
+                    }}
+                    className={cn(
+                      "w-full px-4 py-3 text-sm text-left hover:bg-muted transition-colors font-medium relative z-50",
+                      sortBy === "oldest" && "text-primary bg-primary/5",
+                    )}
+                  >
+                    Oldest
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -129,12 +124,9 @@ export default function NewDropsPage() {
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
-            {products.map((product) => (
+            {sortedProducts.map((product) => (
               <div key={product.id} className="group relative">
-                <Link
-                  href={`/products/${product.name.toLowerCase().replace(/ /g, "-")}`}
-                  className="block"
-                >
+                <Link href={`/products/${product.slug}`} className="block">
                   <div className="relative aspect-square overflow-hidden rounded-[2rem] bg-muted mb-6">
                     <Image
                       src={product.image}
@@ -179,15 +171,18 @@ export default function NewDropsPage() {
                       <span className="text-xs uppercase tracking-widest text-muted-foreground font-bold mb-1 block">
                         {product.category}
                       </span>
-                      <Link
-                        href={`/products/${product.name.toLowerCase().replace(/ /g, "-")}`}
-                      >
+                      <Link href={`/products/${product.slug}`}>
                         <h3 className="font-bold text-lg hover:text-primary transition-colors leading-tight">
                           {product.name}
                         </h3>
                       </Link>
                     </div>
-                    <span className="font-bold text-xl">{product.price}</span>
+                    <div className="flex flex-col items-end">
+                      <span className="font-bold text-xl">{product.price}</span>
+                      <span className="text-xs text-muted-foreground line-through">
+                        {product.originalPrice}
+                      </span>
+                    </div>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <div className="flex items-center">
@@ -211,16 +206,6 @@ export default function NewDropsPage() {
           </div>
         </div>
       </section>
-
-      {/* Pagination Placeholder */}
-      <div className="container mx-auto px-6 pb-24 flex justify-center">
-        <Button
-          variant="outline"
-          className="h-14 px-12 rounded-2xl text-lg font-bold border-2"
-        >
-          Load More Products
-        </Button>
-      </div>
     </div>
   );
 }
