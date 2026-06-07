@@ -58,11 +58,6 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6">
         <div className="flex items-center gap-8">
           <Link href="/" className="group flex items-center gap-2">
-            <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-primary shadow-lg shadow-primary/20 transition-transform group-hover:scale-105">
-              <span className="text-xl font-bold text-primary-foreground">
-                V
-              </span>
-            </div>
             <span className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
               VoidThread
             </span>
@@ -114,14 +109,16 @@ export function Navbar() {
           </div>
 
           <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-11 w-11 rounded-full hover:bg-muted/50 text-foreground/70 hover:text-foreground"
-            >
-              <User className="h-5 w-5" />
-              <span className="sr-only">Account</span>
-            </Button>
+            <Link href="/login">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-11 w-11 rounded-full hover:bg-muted/50 text-foreground/70 hover:text-foreground"
+              >
+                <User className="h-5 w-5" />
+                <span className="sr-only">Account</span>
+              </Button>
+            </Link>
             <Button
               variant="ghost"
               size="icon"
@@ -194,13 +191,15 @@ export function Navbar() {
             <div className="flex flex-col gap-3 pt-6">
               <Button
                 variant="outline"
-                className="w-full h-16 rounded-2xl text-lg font-medium border-2 flex gap-3"
+                className="w-full h-14 rounded-2xl text-lg font-medium border-2 flex gap-3"
               >
-                <Search className="h-6 w-6" /> Search Products
+                <Search className="h-5 w-5" /> Search Products
               </Button>
-              <Button className="w-full h-16 rounded-2xl text-lg font-medium shadow-xl shadow-primary/20 flex gap-3">
-                Shop All Collections <ChevronRight className="h-6 w-6" />
-              </Button>
+              <Link href="/login" onClick={() => setIsOpen(false)} className="w-full">
+                <Button className="w-full h-14 rounded-2xl text-lg font-medium shadow-xl shadow-primary/20 flex gap-2">
+                  Sign In <User className="h-5 w-5" />
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

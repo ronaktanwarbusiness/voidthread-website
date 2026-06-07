@@ -9,11 +9,6 @@ export function Footer() {
           {/* Brand Section */}
           <div className="flex flex-col gap-6">
             <Link href="/" className="group flex items-center gap-2">
-              <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-primary shadow-lg shadow-primary/20 transition-transform group-hover:scale-105">
-                <span className="text-xl font-bold text-primary-foreground">
-                  V
-                </span>
-              </div>
               <span className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
                 VoidThread
               </span>
