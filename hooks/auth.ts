@@ -10,7 +10,11 @@ export const useAuth = () => {
     setLoading(true);
     try {
       const response = await apiClient<any>("/api/v1/auth/session");
-      setUser(response);
+      if (response.is_logged_in) {
+        setUser(response.user);
+      } else {
+        setUser(null);
+      }
       return response;
     } catch (err: any) {
       setUser(null);
@@ -75,6 +79,7 @@ export const useAuth = () => {
 
   return {
     user,
+    isLoggedIn: !!user,
     login,
     register,
     logout,

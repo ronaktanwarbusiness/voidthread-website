@@ -111,47 +111,40 @@ export function Navbar() {
             </Button>
           </div>
 
-          <div className="flex items-center gap-1">
-            <div className="hidden md:flex items-center gap-1">
-              {user ? (
-                <div className="flex items-center gap-1">
-                  <span className="text-xs font-bold mr-2 hidden md:block uppercase tracking-widest text-foreground/70">
-                    {user.first_name}
-                  </span>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-11 w-11 rounded-full hover:bg-muted/50 text-foreground/70 hover:text-foreground"
-                    onClick={() => logout()}
-                  >
-                    <User className="h-5 w-5" />
-                    <span className="sr-only">Logout</span>
-                  </Button>
-                </div>
-              ) : (
-                <Link href="/login">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-11 w-11 rounded-full hover:bg-muted/50 text-foreground/70 hover:text-foreground"
-                  >
-                    <User className="h-5 w-5" />
-                    <span className="sr-only">Account</span>
-                  </Button>
-                </Link>
-              )}
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="relative h-11 w-11 rounded-full hover:bg-muted/50 text-foreground/70 hover:text-foreground"
-            >
-              <ShoppingBag className="h-5 w-5" />
-              <span className="sr-only">Cart</span>
-              <span className="absolute top-2 right-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground border-2 border-background">
-                0
-              </span>
-            </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="relative h-11 w-11 rounded-full hover:bg-muted/50 text-foreground/70 hover:text-foreground"
+          >
+            <ShoppingBag className="h-5 w-5" />
+            <span className="sr-only">Cart</span>
+            <span className="absolute top-2 right-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground border-2 border-background">
+              0
+            </span>
+          </Button>
+
+          <div className="hidden md:flex items-center">
+            {user ? (
+              <Link href="/profile">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-11 w-11 rounded-full hover:bg-muted/50 text-foreground/70 hover:text-foreground"
+                >
+                  <User className="h-5 w-5" />
+                  <span className="sr-only">Profile</span>
+                </Button>
+              </Link>
+            ) : (
+              <Link href="/login">
+                <Button
+                  variant="outline"
+                  className="h-10 rounded-full px-6 text-sm font-bold border-2 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all"
+                >
+                  Login
+                </Button>
+              </Link>
+            )}
           </div>
 
           {/* Mobile Navigation Toggle */}
