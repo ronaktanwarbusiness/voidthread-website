@@ -22,6 +22,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 import { useAuth } from "@/hooks/auth";
+import { useCart } from "@/hooks/cart";
 
 const navItems = [
   {
@@ -38,7 +39,13 @@ const navItems = [
 
 export function Navbar() {
   const { user, logout } = useAuth();
+
+  const { totalItems } = useCart(Boolean(user));
+
+  console.log({ totalItems });
+
   const [isOpen, setIsOpen] = React.useState(false);
+
   const [scrolled, setScrolled] = React.useState(false);
 
   React.useEffect(() => {
@@ -112,15 +119,18 @@ export function Navbar() {
           </div>
 
           <Button
+            asChild
             variant="ghost"
             size="icon"
             className="relative h-11 w-11 rounded-full hover:bg-muted/50 text-foreground/70 hover:text-foreground"
           >
-            <ShoppingBag className="h-5 w-5" />
-            <span className="sr-only">Cart</span>
-            <span className="absolute top-2 right-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground border-2 border-background">
-              0
-            </span>
+            <Link href="/cart">
+              <ShoppingBag className="h-5 w-5" />
+              <span className="sr-only">Cart</span>
+              <span className="absolute top-2 right-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground border-2 border-background">
+                {totalItems}
+              </span>
+            </Link>
           </Button>
 
           <div className="hidden md:flex items-center">

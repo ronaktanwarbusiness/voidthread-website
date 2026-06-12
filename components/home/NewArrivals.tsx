@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ProductCard } from "@/common/components/ProductCard";
+import { ProductCard } from "@/common/components/product/ProductCard";
 import newDropsData from "@/temp/new-drops.json";
 
 const tshirtImage =

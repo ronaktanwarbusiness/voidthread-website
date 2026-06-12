@@ -20,7 +20,9 @@ import { cn } from "@/lib/utils";
 import { useParams } from "next/navigation";
 import { COLOR_CODES, getProduct, type ColorName } from "@/utils/product";
 import { useVariant } from "@/hooks/variant";
+import { useAddToCart } from "@/hooks/cart";
 import type { IVariant } from "@/types/variant";
+import { toast } from "sonner";
 
 const tshirtImage =
   "https://res.cloudinary.com/dwx8nsy4v/image/upload/v1779468923/hope-oversized_goqyqq.png";
@@ -70,6 +72,7 @@ export default function ProductDetailPage() {
   const [quantity, setQuantity] = React.useState(1);
 
   const [isWishlisted, setIsWishlisted] = React.useState(false);
+  const addToCart = useAddToCart();
 
   const purchasableVariants = variants.filter(
     (variant) => variant.status === "ACTIVE" && variant.stock > 0,
@@ -106,6 +109,8 @@ export default function ProductDetailPage() {
     (variant) =>
       variant.color === effectiveColorName && variant.size === effectiveSize,
   );
+
+  console.log({ selectedVariant });
 
   const galleryImages = selectedVariant?.images.length
     ? selectedVariant.images
@@ -151,6 +156,24 @@ export default function ProductDetailPage() {
     if (matchingVariant?.images[0]) {
       setSelectedImage(matchingVariant.images[0]);
     }
+  };
+
+  const handleAddToCart = () => {
+    if (!selectedVariant) {
+      return;
+    }
+
+    addToCart.mutate(
+      {
+        product_id: selectedVariant.product_id,
+        variant_id: selectedVariant.id,
+        quantity,
+      },
+      {
+        onSuccess: () => toast.success("Added to cart"),
+        onError: (error) => toast.error(error.message),
+      },
+    );
   };
 
   if (!product) {
@@ -409,10 +432,12 @@ export default function ProductDetailPage() {
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 pt-6">
               <Button
-                disabled={!selectedVariant}
+                disabled={!selectedVariant || addToCart.isPending}
+                onClick={handleAddToCart}
                 className="flex-1 h-14 rounded-2xl text-lg font-bold shadow-2xl shadow-primary/20 transition-all hover:scale-[1.02] p-3"
               >
-                <ShoppingBag className="mr-2 h-5 w-5" /> Add to Cart
+                <ShoppingBag className="mr-2 h-5 w-5" />
+                {addToCart.isPending ? "Adding..." : "Add to Cart"}
               </Button>
               <Button
                 variant="outline"
