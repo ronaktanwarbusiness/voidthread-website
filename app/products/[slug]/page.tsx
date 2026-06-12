@@ -17,62 +17,183 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useParams } from "next/navigation";
+import { COLOR_CODES, getProduct, type ColorName } from "@/utils/product";
+import { useVariant } from "@/hooks/variant";
+import type { IVariant } from "@/types/variant";
 
 const tshirtImage =
   "https://res.cloudinary.com/dwx8nsy4v/image/upload/v1779468923/hope-oversized_goqyqq.png";
 
-const productData = {
-  name: "Heavyweight Boxy Tee",
-  price: 45.0,
-  description:
-    "The foundation of a modern wardrobe. Our signature heavyweight tee is engineered for the perfect boxy silhouette, crafted from 300GSM premium organic cotton that holds its shape wash after wash.",
-  rating: 4.9,
-  reviews: 128,
-  category: "Oversized Essentials",
-  colors: [
-    { name: "Void Black", hex: "#000000" },
-    { name: "Desert Sand", hex: "#d2b48c" },
-    { name: "Slate Grey", hex: "#708090" },
-  ],
-  sizes: ["S", "M", "L", "XL", "XXL"],
-  details: [
-    "300 GSM Heavyweight Jersey",
-    "100% Organic Cotton",
-    "Pre-shrunk for minimal shrinkage",
-    "Drop shoulder boxy fit",
-    'Thick 1.2" ribbing on neck',
-  ],
-};
+const defaultSizes: IVariant["size"][] = ["S", "M", "L", "XL", "XXL"];
+const productDetails = [
+  "240-300 GSM premium cotton feel",
+  "Relaxed oversized streetwear fit",
+  "Soft breathable fabric for daily wear",
+  "Durable stitching with premium finishing",
+  "Designed for a clean modern silhouette",
+];
 
-export default function ProductDetailPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
-  const [selectedSize, setSelectedSize] = React.useState("M");
-  const [selectedColor, setSelectedColor] = React.useState(
-    productData.colors[0],
+function formatPrice(price?: number) {
+  if (typeof price !== "number") {
+    return "";
+  }
+
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(price);
+}
+
+export default function ProductDetailPage() {
+  const params = useParams();
+
+  const { slug } = params || {};
+
+  const product = getProduct(slug as string);
+
+  const { data: variants = [], isLoading: variantsLoading } = useVariant(
+    product?.slug,
   );
+
+  const [selectedSize, setSelectedSize] = React.useState<IVariant["size"] | "">(
+    "",
+  );
+
+  const [selectedColorName, setSelectedColorName] = React.useState<
+    ColorName | ""
+  >("");
+
+  const [selectedImage, setSelectedImage] = React.useState("");
+
   const [quantity, setQuantity] = React.useState(1);
+
   const [isWishlisted, setIsWishlisted] = React.useState(false);
+
+  const purchasableVariants = variants.filter(
+    (variant) => variant.status === "ACTIVE" && variant.stock > 0,
+  );
+
+  const availableColors = Array.from(
+    new Set(purchasableVariants.map((variant) => variant.color)),
+  );
+
+  const firstAvailableVariant = defaultSizes
+    .map((size) => purchasableVariants.find((variant) => variant.size === size))
+    .find((variant) => variant !== undefined);
+
+  const effectiveColorName =
+    selectedColorName || firstAvailableVariant?.color || "";
+
+  const effectiveSize =
+    selectedSize ||
+    defaultSizes.find((size) =>
+      purchasableVariants.some(
+        (variant) =>
+          variant.color === effectiveColorName && variant.size === size,
+      ),
+    ) ||
+    "";
+
+  const availableSizes = new Set(
+    purchasableVariants
+      .filter((variant) => variant.color === effectiveColorName)
+      .map((variant) => variant.size),
+  );
+
+  const selectedVariant = purchasableVariants.find(
+    (variant) =>
+      variant.color === effectiveColorName && variant.size === effectiveSize,
+  );
+
+  const galleryImages = selectedVariant?.images.length
+    ? selectedVariant.images
+    : purchasableVariants.find(
+        (variant) =>
+          variant.color === effectiveColorName && variant.images.length,
+      )?.images || [];
+
+  const displayedImage = selectedImage || galleryImages[0] || tshirtImage;
+
+  const selectColor = (color: ColorName) => {
+    setSelectedColorName(color);
+
+    const matchingVariants = purchasableVariants.filter(
+      (variant) => variant.color === color,
+    );
+
+    if (
+      selectedSize &&
+      !matchingVariants.some((variant) => variant.size === selectedSize)
+    ) {
+      setSelectedSize("");
+    }
+
+    setSelectedImage(
+      matchingVariants.find((variant) => variant.images.length)?.images[0] ||
+        tshirtImage,
+    );
+  };
+
+  const selectSize = (size: IVariant["size"]) => {
+    setSelectedSize(size);
+
+    const matchingVariant = purchasableVariants.find(
+      (variant) =>
+        variant.size === size && variant.color === effectiveColorName,
+    );
+
+    if (!selectedColorName && matchingVariant) {
+      setSelectedColorName(matchingVariant.color);
+    }
+
+    if (matchingVariant?.images[0]) {
+      setSelectedImage(matchingVariant.images[0]);
+    }
+  };
+
+  if (!product) {
+    return (
+      <div className="min-h-screen bg-background pt-12 pb-8 md:pt-24 md:pb-16">
+        <div className="container mx-auto px-6">
+          <div className="max-w-xl rounded-[2rem] border border-border/50 bg-muted/30 p-8 md:p-10">
+            <span className="text-xs font-bold tracking-[0.2em] uppercase text-primary">
+              Product Not Found
+            </span>
+            <h1 className="mt-4 text-3xl font-bold tracking-tighter">
+              This product is not available right now.
+            </h1>
+            <p className="mt-4 text-muted-foreground">
+              The product data was not found in the prebuilt catalog. Please go
+              back to collections and try another item.
+            </p>
+            <Button asChild className="mt-8 rounded-2xl px-6">
+              <Link href="/collections/new-drops">Back to New Drops</Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background pt-12 pb-8 md:pt-24 md:pb-16">
       <div className="container mx-auto px-6">
         {/* Breadcrumbs */}
         <nav className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-8">
-          <a href="/" className="hover:text-primary transition-colors">
+          <Link href="/" className="hover:text-primary transition-colors">
             Home
-          </a>
+          </Link>
           <ChevronRight className="h-3 w-3" />
-          <a
+          <Link
             href="/collections/new-drops"
             className="hover:text-primary transition-colors"
           >
             Collections
-          </a>
+          </Link>
           <ChevronRight className="h-3 w-3" />
-          <span className="text-foreground">{productData.name}</span>
+          <span className="text-foreground">{product.name}</span>
         </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
@@ -80,8 +201,8 @@ export default function ProductDetailPage({
           <div className="space-y-4">
             <div className="relative aspect-square overflow-hidden rounded-[2.5rem] bg-muted border border-border/50 shadow-2xl shadow-primary/5">
               <Image
-                src={tshirtImage}
-                alt={productData.name}
+                src={displayedImage}
+                alt={product.name}
                 fill
                 className="object-cover"
                 priority
@@ -101,22 +222,30 @@ export default function ProductDetailPage({
               </button>
             </div>
 
-            {/* Thumbnail Placeholders */}
-            <div className="grid grid-cols-4 gap-4">
-              {[1, 2, 3, 4].map((i) => (
-                <div
-                  key={i}
-                  className="relative aspect-square overflow-hidden rounded-2xl bg-muted border border-border/50 cursor-pointer hover:opacity-80 transition-opacity"
-                >
-                  <Image
-                    src={tshirtImage}
-                    alt="Thumbnail"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              ))}
-            </div>
+            {galleryImages.length > 1 ? (
+              <div className="grid grid-cols-4 gap-4">
+                {galleryImages.map((image, index) => (
+                  <button
+                    type="button"
+                    key={`${image}-${index}`}
+                    onClick={() => setSelectedImage(image)}
+                    className={cn(
+                      "relative aspect-square overflow-hidden rounded-2xl bg-muted border-2 cursor-pointer hover:opacity-80 transition-all",
+                      displayedImage === image
+                        ? "border-primary"
+                        : "border-border/50",
+                    )}
+                  >
+                    <Image
+                      src={image}
+                      alt={`${product.name} thumbnail ${index + 1}`}
+                      fill
+                      className="object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            ) : null}
           </div>
 
           {/* Right: Product Info */}
@@ -125,10 +254,10 @@ export default function ProductDetailPage({
               <div className="flex justify-between items-start">
                 <div className="flex flex-col gap-2">
                   <span className="text-xs font-bold tracking-[0.2em] uppercase text-primary">
-                    {productData.category}
+                    Premium Streetwear
                   </span>
                   <h1 className="text-4xl md:text-5xl font-bold tracking-tighter">
-                    {productData.name}
+                    {product.name}
                   </h1>
                 </div>
                 <button className="h-10 w-10 flex items-center justify-center rounded-full bg-muted/50 hover:bg-muted transition-colors">
@@ -146,45 +275,69 @@ export default function ProductDetailPage({
                       />
                     ))}
                   </div>
-                  <span className="text-sm font-bold">
-                    {productData.rating}
-                  </span>
+                  <span className="text-sm font-bold">5.0</span>
                 </div>
                 <span className="text-muted-foreground text-sm font-medium">
-                  ({productData.reviews} reviews)
+                  Premium quality
                 </span>
               </div>
 
-              <span className="text-3xl font-bold">
-                ${productData.price.toFixed(2)}
-              </span>
+              <div className="flex items-center gap-3">
+                <span className="text-3xl font-bold">
+                  {formatPrice(product.selling_price)}
+                </span>
+                {product.original_price > product.selling_price ? (
+                  <span className="text-lg text-muted-foreground line-through">
+                    {formatPrice(product.original_price)}
+                  </span>
+                ) : null}
+              </div>
             </div>
 
             <p className="text-muted-foreground leading-relaxed text-lg max-w-xl">
-              {productData.description}
+              {product.description}
             </p>
 
             {/* Selection Options */}
             <div className="flex flex-col gap-6 pt-4">
               {/* Colors */}
               <div className="flex flex-col gap-3">
-                <span className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-                  Color: {selectedColor.name}
-                </span>
-                <div className="flex items-center gap-3">
-                  {productData.colors.map((color) => (
+                <div className="flex items-center justify-between gap-4">
+                  <span className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+                    Color:{" "}
+                    {effectiveColorName
+                      ? effectiveColorName.replaceAll("_", " ")
+                      : "Select a color"}
+                  </span>
+                  {variantsLoading ? (
+                    <span className="text-xs text-muted-foreground">
+                      Loading variants...
+                    </span>
+                  ) : null}
+                </div>
+                <div className="flex flex-wrap items-center gap-3">
+                  {availableColors.map((color) => (
                     <button
-                      key={color.name}
-                      onClick={() => setSelectedColor(color)}
+                      type="button"
+                      key={color}
+                      title={color.replaceAll("_", " ")}
+                      aria-label={`Select ${color.replaceAll("_", " ")}`}
+                      aria-pressed={effectiveColorName === color}
+                      onClick={() => selectColor(color)}
                       className={cn(
-                        "h-8 w-8 rounded-full border-2 transition-all",
-                        selectedColor.name === color.name
-                          ? "border-primary scale-110"
-                          : "border-transparent",
+                        "h-9 w-9 rounded-full border-2 ring-offset-2 ring-offset-background transition-all",
+                        effectiveColorName === color
+                          ? "border-background ring-2 ring-primary scale-110"
+                          : "border-border hover:scale-105",
                       )}
-                      style={{ backgroundColor: color.hex }}
+                      style={{ backgroundColor: COLOR_CODES[color] }}
                     />
                   ))}
+                  {!variantsLoading && availableColors.length === 0 ? (
+                    <span className="text-sm text-muted-foreground">
+                      No colors currently available
+                    </span>
+                  ) : null}
                 </div>
               </div>
 
@@ -202,20 +355,29 @@ export default function ProductDetailPage({
                   </Link>
                 </div>
                 <div className="flex flex-wrap gap-3">
-                  {productData.sizes.map((size) => (
-                    <button
-                      key={size}
-                      onClick={() => setSelectedSize(size)}
-                      className={cn(
-                        "h-12 w-16 rounded-xl border-2 font-bold transition-all",
-                        selectedSize === size
-                          ? "border-primary bg-primary/5 text-primary"
-                          : "border-border/50 hover:border-primary/50",
-                      )}
-                    >
-                      {size}
-                    </button>
-                  ))}
+                  {defaultSizes.map((size) => {
+                    const isAvailable = availableSizes.has(size);
+
+                    return (
+                      <button
+                        type="button"
+                        key={size}
+                        disabled={!isAvailable}
+                        aria-pressed={effectiveSize === size}
+                        onClick={() => selectSize(size)}
+                        className={cn(
+                          "h-12 w-16 rounded-xl border-2 font-bold transition-all",
+                          effectiveSize === size
+                            ? "border-primary bg-primary/5 text-primary"
+                            : "border-border/50 hover:border-primary/50",
+                          !isAvailable &&
+                            "cursor-not-allowed opacity-35 hover:border-border/50",
+                        )}
+                      >
+                        {size}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -246,11 +408,15 @@ export default function ProductDetailPage({
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 pt-6">
-              <Button className="flex-1 h-14 rounded-2xl text-lg font-bold shadow-2xl shadow-primary/20 transition-all hover:scale-[1.02] p-3">
+              <Button
+                disabled={!selectedVariant}
+                className="flex-1 h-14 rounded-2xl text-lg font-bold shadow-2xl shadow-primary/20 transition-all hover:scale-[1.02] p-3"
+              >
                 <ShoppingBag className="mr-2 h-5 w-5" /> Add to Cart
               </Button>
               <Button
                 variant="outline"
+                disabled={!selectedVariant}
                 className="flex-1 h-14 rounded-2xl text-lg font-bold border-2 transition-all hover:bg-primary hover:text-primary-foreground hover:border-primary p-3"
               >
                 Buy Now
@@ -294,7 +460,7 @@ export default function ProductDetailPage({
         <div className="mt-24 max-w-4xl">
           <h2 className="text-3xl font-bold mb-8">Technical Details</h2>
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-12">
-            {productData.details.map((detail, index) => (
+            {productDetails.map((detail, index) => (
               <li
                 key={index}
                 className="flex items-center gap-3 text-muted-foreground"
