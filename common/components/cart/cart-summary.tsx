@@ -1,12 +1,13 @@
-import { ArrowRight, ShieldCheck, Tag } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ShieldCheck, Tag } from "lucide-react";
 import type { CartPriceBreakup } from "@/types/cart";
+import PaymentButton from "../button/payment-button";
 
 function formatPrice(price: number) {
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "INR",
-    maximumFractionDigits: 0,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
   }).format(price);
 }
 
@@ -35,19 +36,20 @@ export function CartSummary({
           </span>
           <span>-{formatPrice(priceBreakup.discount_total)}</span>
         </div>
+        <div className="flex justify-between gap-4 text-muted-foreground">
+          <span>Tax ({priceBreakup.tax_percentage}%)</span>
+          <span>{formatPrice(priceBreakup.tax_total)}</span>
+        </div>
       </div>
 
       <div className="flex items-center justify-between gap-4 py-6">
         <span className="font-bold">Total</span>
         <span className="text-2xl font-bold">
-          {formatPrice(priceBreakup.selling_total)}
+          {formatPrice(priceBreakup.grand_total)}
         </span>
       </div>
 
-      <Button className="h-12 w-full rounded-2xl text-base font-bold">
-        Proceed to Checkout
-        <ArrowRight className="ml-2 h-4 w-4" />
-      </Button>
+      <PaymentButton title="Place Order" />
 
       <p className="mt-4 flex items-center justify-center gap-2 text-xs text-muted-foreground">
         <ShieldCheck className="h-4 w-4 text-primary" />

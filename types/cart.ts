@@ -34,6 +34,9 @@ export interface CartPriceBreakup {
   discount_total: number;
   total_quantity: number;
   item_count: number;
+  tax_percentage: number;
+  tax_total: number;
+  grand_total: number;
 }
 
 export interface Cart {
