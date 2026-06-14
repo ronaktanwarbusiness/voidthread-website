@@ -2,7 +2,7 @@ const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "https://api.voidthread.in";
 const TEMP_DIR = path.join(process.cwd(), "temp");
 
 function extractPayload(payload) {
