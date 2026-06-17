@@ -17,7 +17,7 @@ export function PageHeader({
   return (
     <section
       className={cn(
-        "relative pt-12 pb-6 md:pt-16 md:pb-8 overflow-hidden border-b bg-background",
+        "relative pt-12 pb-6 md:pt-8 md:pb-8 overflow-hidden border-b bg-background",
         className,
       )}
       {...props}
@@ -34,7 +34,7 @@ export function PageHeader({
               {badge}
             </div>
           )}
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tighter mb-3">
+          <h1 className="text-xl md:text-3xl font-bold tracking-tighter mb-3">
             {title}
           </h1>
           {description && (

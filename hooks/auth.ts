@@ -77,12 +77,35 @@ export const useAuth = () => {
     }
   };
 
+  const updateProfile = async (data: {
+    first_name?: string;
+    last_name?: string;
+    phone?: string;
+  }) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await apiClient<any>("/api/v1/user/update", {
+        method: "PATCH",
+        body: data,
+      });
+      await getSession();
+      return response;
+    } catch (err: any) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     user,
     isLoggedIn: !!user,
     login,
     register,
     logout,
+    updateProfile,
     loading,
     error,
     refreshSession: getSession,
