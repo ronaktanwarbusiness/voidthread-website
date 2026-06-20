@@ -5,9 +5,6 @@ import { ProductCard } from "@/common/components/product/ProductCard";
 import newDropsData from "@/temp/new-drops.json";
 import { SectionHeader } from "@/common/components/header";
 
-const tshirtImage =
-  "https://res.cloudinary.com/dwx8nsy4v/image/upload/v1779468923/hope-oversized_goqyqq.png";
-
 export function NewArrivals() {
   return (
     <section className="py-24 bg-background">
