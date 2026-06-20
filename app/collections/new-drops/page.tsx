@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { SlidersHorizontal, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { PageHeader } from "@/common/components/page-header";
+import { PageHeader } from "@/common/components/header";
 import { ProductCard } from "@/common/components/product/ProductCard";
 import newDropsData from "@/temp/new-drops.json";
 

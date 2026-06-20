@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
-import { PageHeader } from "@/common/components/page-header";
+import { PageHeader } from "@/common/components/header";
 
 export const metadata: Metadata = {
   title: "Contact Us | VoidThread",

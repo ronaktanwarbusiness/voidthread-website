@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { PageHeader } from "@/common/components/page-header";
+import { PageHeader } from "@/common/components/header";
 
 export const metadata: Metadata = {
   title: "Cookie Policy | VoidThread",

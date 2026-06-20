@@ -6,7 +6,7 @@ import { Footer } from "./footer";
 export function ConditionalFooter() {
   const pathname = usePathname();
 
-  if (pathname === "/cart") {
+  if (pathname === "/cart" || pathname === "/checkout") {
     return null;
   }
 

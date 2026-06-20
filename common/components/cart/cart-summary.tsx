@@ -1,6 +1,7 @@
-import { ShieldCheck, Tag } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, ShieldCheck, Tag } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import type { CartPriceBreakup } from "@/types/cart";
-import PaymentButton from "../button/payment-button";
 
 function formatPrice(price: number) {
   return new Intl.NumberFormat("en-IN", {
@@ -11,11 +12,7 @@ function formatPrice(price: number) {
   }).format(price);
 }
 
-export function CartSummary({
-  priceBreakup,
-}: {
-  priceBreakup: CartPriceBreakup;
-}) {
+export function CartSummary({ priceBreakup }: { priceBreakup: CartPriceBreakup }) {
   return (
     <aside className="rounded-[2rem] border border-border/60 bg-muted/30 p-6 lg:sticky lg:top-28">
       <h2 className="text-xl font-bold tracking-tight">Order Summary</h2>
@@ -49,7 +46,12 @@ export function CartSummary({
         </span>
       </div>
 
-      <PaymentButton title="Place Order" />
+      <Button asChild className="h-12 w-full rounded-2xl text-base font-bold">
+        <Link href="/checkout">
+          Proceed to Checkout
+          <ArrowRight className="ml-2 h-4 w-4" />
+        </Link>
+      </Button>
 
       <p className="mt-4 flex items-center justify-center gap-2 text-xs text-muted-foreground">
         <ShieldCheck className="h-4 w-4 text-primary" />

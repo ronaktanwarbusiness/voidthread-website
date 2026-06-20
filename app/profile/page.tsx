@@ -6,7 +6,7 @@ import { Phone, Mail, LogOut, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/auth";
 import { toast } from "sonner";
-import { PageHeader } from "@/common/components/page-header";
+import { PageHeader } from "@/common/components/header";
 
 export default function ProfilePage() {
   const { user, loading, logout, updateProfile, isLoggedIn } = useAuth();
@@ -75,7 +75,6 @@ export default function ProfilePage() {
         description="Manage your account details."
       />
       <div className="container mx-auto py-12 px-6">
-
         {/* Avatar */}
         <div className="flex items-center justify-between gap-4 mb-8">
           <div className="flex items-center gap-4">

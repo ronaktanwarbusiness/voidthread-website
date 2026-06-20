@@ -1,5 +1,5 @@
 import { CartContent } from "@/common/components/cart";
-import { PageHeader } from "@/common/components/page-header";
+import { PageHeader } from "@/common/components/header";
 
 export default function CartPage() {
   return (

@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { ArrowRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export function Hero() {
   return (
@@ -22,22 +22,31 @@ export function Hero() {
           The Ultimate Tee Drop is Live
         </div>
 
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter mb-6 max-w-5xl animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-200">
-          Redefining the <span className="italic font-serif text-primary">Essentials</span> of Streetwear.
+        <h1 className="text-5xl lg:text-7xl font-bold tracking-tighter mb-6 max-w-5xl animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-200">
+          Redefining the{" "}
+          <span className="italic font-serif text-primary">Essentials</span> of
+          Streetwear.
         </h1>
 
-        <p className="text-base md:text-lg text-muted-foreground max-w-2xl mb-8 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
-          VoidThread crafts premium, heavyweight t-shirts designed to be the core of your wardrobe. 
-          Unmatched quality, timeless silhouettes.
+        <p className="text-base text-muted-foreground max-w-2xl mb-8 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
+          VoidThread crafts premium, heavyweight t-shirts designed to be the
+          core of your wardrobe. Unmatched quality, timeless silhouettes.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center gap-4 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-500">
           <Link href="/collections/new-drops">
-            <Button size="lg" className="h-12 px-8 rounded-full text-base shadow-2xl shadow-primary/20 hover:shadow-primary/40 transition-all">
+            <Button
+              size="lg"
+              className="h-12 px-8 rounded-full text-base shadow-2xl shadow-primary/20 hover:shadow-primary/40 transition-all"
+            >
               Shop New Drops <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </Link>
-          <Button variant="outline" size="lg" className="h-12 px-8 rounded-full text-base border-2">
+          <Button
+            variant="outline"
+            size="lg"
+            className="h-12 px-8 rounded-full text-base border-2"
+          >
             View Collections
           </Button>
         </div>
@@ -48,5 +57,5 @@ export function Hero() {
         <div className="w-px h-12 bg-foreground" />
       </div>
     </section>
-  )
+  );
 }

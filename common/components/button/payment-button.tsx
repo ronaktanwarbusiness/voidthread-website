@@ -2,37 +2,49 @@
 import { Button } from "@/components/ui/button";
 import { apiClient } from "@/lib/api-client";
 import { ArrowRight } from "lucide-react";
-import React, { FC } from "react";
+import { FC, useState } from "react";
 import { load } from "@cashfreepayments/cashfree-js";
 
-const PaymentButton: FC<IPaymentButtonProps> = ({ title = "Place Order" }) => {
+const PaymentButton: FC<IPaymentButtonProps> = ({
+  title = "Place Order",
+  shippingAddressId,
+  billingAddressId,
+}) => {
+  const [isPending, setIsPending] = useState(false);
+
   const handlePayment = async () => {
-    // Implement payment logic here
-    console.log("Payment initiated");
+    setIsPending(true);
+    try {
+      const paymentCreateResponse: any = await apiClient(
+        "/api/v1/payment/create",
+        {
+          method: "POST",
+          body: {
+            shipping_address_id: shippingAddressId,
+            billing_address_id: billingAddressId,
+          },
+        },
+      );
 
-    const paymentCreateResponse: any = await apiClient(
-      "/api/v1/payment/create",
-      {
-        method: "POST",
-      },
-    );
+      const cashfree = await load({ mode: "sandbox" });
 
-    const cashfree = await load({
-      mode: "sandbox",
-    });
-
-    cashfree.checkout({
-      paymentSessionId: paymentCreateResponse.payment_session_id,
-      redirectTarget: "_self",
-    });
+      cashfree.checkout({
+        paymentSessionId: paymentCreateResponse.payment_session_id,
+        redirectTarget: "_self",
+      });
+    } finally {
+      setIsPending(false);
+    }
   };
+
   return (
     <Button
       className="h-12 w-full rounded-2xl text-base font-bold"
+      disabled={!shippingAddressId || isPending}
       onClick={handlePayment}
     >
-      {title}
-      <ArrowRight className="ml-2 h-4 w-4" />
+      {isPending ? "Processing..." : title}
+      {!isPending && <ArrowRight className="ml-2 h-4 w-4" />}
     </Button>
   );
 };
@@ -40,5 +52,7 @@ const PaymentButton: FC<IPaymentButtonProps> = ({ title = "Place Order" }) => {
 export default PaymentButton;
 
 interface IPaymentButtonProps {
-  title: string;
+  title?: string;
+  shippingAddressId: string | null;
+  billingAddressId: string | null;
 }
