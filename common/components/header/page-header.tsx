@@ -17,7 +17,7 @@ export function PageHeader({
   return (
     <section
       className={cn(
-        "relative pt-2 pb-6 md:pt-12 md:pb-8 overflow-hidden border-b bg-background",
+        "relative py-6 md:pt-12 md:pb-8 overflow-hidden border-b bg-background",
         className,
       )}
       {...props}

@@ -42,13 +42,15 @@ export function Hero() {
               Shop New Drops <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </Link>
-          <Button
-            variant="outline"
-            size="lg"
-            className="h-12 px-8 rounded-full text-base border-2"
-          >
-            View Collections
-          </Button>
+          <Link href="/collections">
+            <Button
+              variant="outline"
+              size="lg"
+              className="h-12 px-8 rounded-full text-base border-2"
+            >
+              View Collections
+            </Button>
+          </Link>
         </div>
       </div>
 
