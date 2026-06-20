@@ -89,7 +89,7 @@ export function ProductCard({
       </Link>
 
       <div className="flex flex-col gap-2">
-        <div className="flex justify-between items-start">
+        <div className="flex justify-between items-center gap-2">
           <div>
             <span
               className={cn(
@@ -116,20 +116,20 @@ export function ProductCard({
                 isCompact ? "font-bold text-lg" : "font-bold text-xl",
               )}
             >
-              {selling_price}
+              ₹{selling_price}
             </span>
             {original_price ? (
               <span className="text-xs text-muted-foreground line-through">
-                {original_price}
+                ₹{original_price}
               </span>
             ) : null}
           </div>
         </div>
 
-        {/* {isCompact ? (
+        {isCompact ? (
           <div className="flex items-center gap-1">
             <Star className="h-4 w-4 fill-primary text-primary" />
-            <span className="text-sm font-medium">{rating}</span>
+            <span className="text-sm font-medium">{5}</span>
           </div>
         ) : (
           <div className="flex items-center gap-1.5">
@@ -139,16 +139,16 @@ export function ProductCard({
                   key={i}
                   className={cn(
                     "h-3.5 w-3.5",
-                    i < Math.floor(rating)
+                    i < Math.floor(5)
                       ? "fill-primary text-primary"
                       : "fill-muted text-muted",
                   )}
                 />
               ))}
             </div>
-            <span className="text-xs font-bold">{rating}</span>
+            <span className="text-xs font-bold">{5}</span>
           </div>
-        )} */}
+        )}
       </div>
     </div>
   );
