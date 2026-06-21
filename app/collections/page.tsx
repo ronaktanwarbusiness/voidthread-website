@@ -4,7 +4,7 @@ import { BrandEthos } from "@/common/components/brand/BrandEthos";
 import collectionsData from "@/temp/collections.json";
 
 export default function CollectionsPage() {
-  const collections = collectionsData.map((c) => ({
+  const collections = collectionsData.map((c: any) => ({
     title: c.name,
     description: "",
     image: c.banner_img,
