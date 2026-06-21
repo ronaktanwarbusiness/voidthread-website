@@ -24,9 +24,6 @@ import { useAddToCart } from "@/hooks/cart";
 import type { IVariant } from "@/types/variant";
 import { toast } from "sonner";
 
-const tshirtImage =
-  "https://res.cloudinary.com/dwx8nsy4v/image/upload/v1779468923/hope-oversized_goqyqq.png";
-
 const defaultSizes: IVariant["size"][] = ["S", "M", "L", "XL", "XXL"];
 const productDetails = [
   "240-300 GSM premium cotton feel",
@@ -119,7 +116,7 @@ export default function ProductDetailPage() {
           variant.color === effectiveColorName && variant.images.length,
       )?.images || [];
 
-  const displayedImage = selectedImage || galleryImages[0] || tshirtImage;
+  const displayedImage = selectedImage || galleryImages[0];
 
   const selectColor = (color: ColorName) => {
     setSelectedColorName(color);
@@ -137,7 +134,7 @@ export default function ProductDetailPage() {
 
     setSelectedImage(
       matchingVariants.find((variant) => variant.images.length)?.images[0] ||
-        tshirtImage,
+        "",
     );
   };
 

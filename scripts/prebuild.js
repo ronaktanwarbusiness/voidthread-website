@@ -2,7 +2,8 @@ const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
 
-const BASE_URL = "https://api.voidthread.in";
+// const BASE_URL = "https://api.voidthread.in";
+const BASE_URL = "http://localhost:8080";
 const TEMP_DIR = path.join(process.cwd(), "temp");
 
 function extractPayload(payload) {
@@ -25,6 +26,24 @@ async function fetchCollectionProducts(slug) {
       timestamp: new Date().toISOString(),
       products: [],
     };
+  }
+}
+
+async function fetchAllCollections() {
+  const API_URL = `${BASE_URL}/api/v1/core/collections`;
+  console.log(`[Pre-build] Fetching all collections from: ${API_URL}`);
+
+  try {
+    const response = await axios.get(API_URL);
+
+    console.log({response})
+
+    return response.data;
+  } catch (e) {
+    console.warn(
+      `[Pre-build] Could not fetch collections, using empty data. Error: ${e.message}`,
+    );
+    return { data: [] };
   }
 }
 
@@ -58,10 +77,23 @@ function writeJsonFile(fileName, data) {
 
 async function prebuild() {
   try {
-    // Create temp directory if it doesn't exist
     if (!fs.existsSync(TEMP_DIR)) {
       fs.mkdirSync(TEMP_DIR, { recursive: true });
     }
+
+    const collectionsData = await fetchAllCollections();
+    const collections = extractPayload(collectionsData);
+    writeJsonFile("collections.json", collections);
+
+    await Promise.all(
+      collections.map(async (collection) => {
+        const products = await fetchCollectionProducts(collection.slug);
+        writeJsonFile(
+          `${collection.slug}.json`,
+          extractPayload(products),
+        );
+      }),
+    );
 
     const newDropsData = await fetchNewDrops();
     const productsData = await fetchAllProducts();

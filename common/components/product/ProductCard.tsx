@@ -16,6 +16,7 @@ export type ProductCardProps = {
   rating?: number;
   badge?: string;
   variant?: "default" | "compact";
+  category?: string;
 };
 
 export function ProductCard({
@@ -25,9 +26,9 @@ export function ProductCard({
   selling_price,
   original_price,
   images,
-  rating,
   badge,
   variant = "default",
+  category = "OVERSIZED",
 }: ProductCardProps) {
   const isCompact = variant === "compact";
 
@@ -97,12 +98,12 @@ export function ProductCard({
                 isCompact ? "font-medium" : "font-bold",
               )}
             >
-              {/* {category} */}
+              {category}
             </span>
             <Link href={`/products/${slug}`}>
               <h3
                 className={cn(
-                  "hover:text-primary transition-colors leading-tight",
+                  "hover:text-primary transition-colors leading-tight line-clamp-1",
                   isCompact ? "font-semibold text-lg" : "font-bold text-lg",
                 )}
               >
@@ -126,7 +127,7 @@ export function ProductCard({
           </div>
         </div>
 
-        {isCompact ? (
+        {/* {isCompact ? (
           <div className="flex items-center gap-1">
             <Star className="h-4 w-4 fill-primary text-primary" />
             <span className="text-sm font-medium">{5}</span>
@@ -148,7 +149,7 @@ export function ProductCard({
             </div>
             <span className="text-xs font-bold">{5}</span>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );
