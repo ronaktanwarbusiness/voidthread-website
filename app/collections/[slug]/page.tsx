@@ -6,6 +6,7 @@ import { SlidersHorizontal, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PageHeader } from "@/common/components/header";
 import { ProductCard } from "@/common/components/product/ProductCard";
+import type { ICollection } from "@/types/collection";
 
 const tshirtImage =
   "https://res.cloudinary.com/dwx8nsy4v/image/upload/v1779468923/hope-oversized_goqyqq.png";
@@ -29,10 +30,8 @@ export default function CollectionPage() {
 
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const collections = require("@/temp/collections.json");
-    collectionMeta = collections.find(
-      (c: { slug: string }) => c.slug === slug,
-    );
+    const collections: ICollection[] = require("@/temp/collections.json");
+    collectionMeta = collections.find((c) => c.slug === slug);
   } catch {
     // collections.json may not exist yet
   }

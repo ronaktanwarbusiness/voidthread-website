@@ -1,9 +1,10 @@
 import { SectionHeader } from "@/common/components/header";
 import { CollectionCard } from "@/common/components/collection/CollectionCard";
 import collectionsData from "@/temp/collections.json";
+import type { ICollection } from "@/types/collection";
 
 export function FeaturedCollections() {
-  const collections = collectionsData.slice(0, 4).map((c) => ({
+  const collections = (collectionsData as ICollection[]).slice(0, 4).map((c) => ({
     title: c.name,
     description: "",
     image: c.banner_img,

@@ -2,9 +2,10 @@ import { PageHeader } from "@/common/components/header";
 import { CollectionCard } from "@/common/components/collection/CollectionCard";
 import { BrandEthos } from "@/common/components/brand/BrandEthos";
 import collectionsData from "@/temp/collections.json";
+import type { ICollection } from "@/types/collection";
 
 export default function CollectionsPage() {
-  const collections = collectionsData.map((c: any) => ({
+  const collections = (collectionsData as ICollection[]).map((c) => ({
     title: c.name,
     description: "",
     image: c.banner_img,
